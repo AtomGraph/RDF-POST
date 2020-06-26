@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>RDF/POST Encoding for RDF</title>
+        <meta charset='utf-8'>
+        <script src='https://www.w3.org/Tools/respec/respec-w3c-common' async class='remove'></script>
+        <script class='remove'>
+          var respecConfig = {
+              // specification status (e.g. WD, LCWD, WG-NOTE, etc.). If in doubt use ED.
+              specStatus:           "ED",
+              
+              // the specification's short name, as in http://www.w3.org/TR/short-name/
+              shortName:            "rdf-post",
+
+              // if your specification has a subtitle that goes below the main
+              // formal title, define it here
+              // subtitle   :  "an excellent document",
+
+              // if you wish the publication date to be other than the last modification, set this
+              // publishDate:  "2009-08-06",
+
+              // if the specification's copyright date is a range of years, specify
+              // the start date here:
+              // copyrightStart: "2005"
+
+              // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+              // and its maturity status
+              // previousPublishDate:  "1977-03-15",
+              // previousMaturity:  "WD",
+
+              // if there a publicly available Editor's Draft, this is the link
+              edDraftURI:           "https://atomgraph.github.io/RDF-POST/",
+
+              // if this is a LCWD, uncomment and set the end of its review period
+              // lcEnd: "2009-08-05",
+
+              // editors, add as many as you like
+              // only "name" is required
+              editors:  [
+                  {
+                      name:       "Sergei Egorov"
+                  ,   mailto:     "esl@ariadnegenomics.com"
+                  },
+                  {
+                      name:       "Martynas Jusevičius"
+                  ,   mailto:     "martynas@atomgraph.com"
+                  ,   company:    "AtomGraph"
+                  ,   companyURL: "https://atomgraph.com/"
+                  }
+              ],          
+              wg: "Declarative Linked Data Apps Community Group",
+              wgURI: "https://www.w3.org/community/declarative-apps/",
+              wgPublicList: "public-declarative-apps"
+          };
+        </script>
+    </head>
+    <body>
+        <section id='abstract'>
+            <p>RDF/POST is a method for encoding an RDF graph using plain HTML forms.</p>
+        </section>
+        <section id='sotd'>
+            <p>This document is based on the RDF/POST draft by Sergei Egorov.</p>
+        </section>
+        <section class="informative">
+            <h2>Introduction</h2>
+            <p>The Resource Description Framework (<abbr title="Resource Description Framework">RDF</abbr>) is the basic knowledge representation model for the W3C Semantic Web initiative. RDF/POST is an encoding method allowing the transfer of RDF data via the traditional HTTP GET and HTTP POST mechanism, facilitating the creation of RDF-in/RDF-out web services with dual interfaces (direct programmatic access and human-friendly entry and result pages).</p>
+            <p>The W3C <a href="http://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4">HTML 4 Forms</a> recommendation specifies the behavior of HTTP user agents and includes a short description of the format used for submission of form data (MIME type application/x-www-form-urlencoded). The format is rather simple; its data model is an ordered list of key/value pairs, where keys and values are just strings. As implemented in modern browsers, the format has its limitations, but there is nothing preventing one from using (a profile of) it to serialize any RDF graph.</p>
+            <p>The proposed serialization is straightforward and rather concise, which makes it suitable for use with HTTP GET (URLs over 2K in length run a risk of causing "414 Request URL Too Long" reply from the server). It inherits the abbreviated tree form from [[Turtle]], using different keys for subject, predicate, and object to eliminate the need for punctuation.</p>
+        </section>
+        <section>
+            <h2 id="sec-grammar">RDF/POST Grammar</h2>
+            <p>This EBNF is defined in XML 1.0 second edition [[XML]].</p>
+            <table class="grammar">
+                <tr><td><var>rdf</var></td><td>::=</td><td>'<b>rdf=</b>' <var>def_ns_decl</var>? <var>ns_decl</var>* <var>triples</var>*</td></tr>
+                <tr><td><var>def_ns_decl</var></td><td>::=</td><td>'<b>&amp;v=</b>' <var>uri_prefix</var></td></tr>
+                <tr><td><var>ns_decl</var></td><td>::=</td><td>'<b>&amp;n=</b>' <var>name</var> '<b>&amp;v=</b>' <var>uri_prefix</var></td></tr>
+                <tr><td><var>triples</var></td><td>::=</td><td><var>subj</var> <var>property</var>*</td></tr>
+                <tr style="height: 0.5em"><td colspan="3"></td></tr>
+                <tr><td><var>subj</var></td><td>::=</td><td><var>blank_subj</var> | <var>uri_subj</var> | <var>def_ns_subj</var> | <var>ns_subj</var></td></tr>
+                <tr><td><var>blank_subj</var></td><td>::=</td><td>'<b>&amp;sb=</b>' <var>name</var></td></tr>
+                <tr><td><var>uri_subj</var></td><td>::=</td><td>'<b>&amp;su=</b>' <var>uri</var></td></tr>
+                <tr><td><var>def_ns_subj</var></td><td>::=</td><td>'<b>&amp;sv=</b>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>ns_subj</var></td><td>::=</td><td>'<b>&amp;sn=</b>' <var>name</var> '<b>&amp;sv=</b>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>property</var></td><td>::=</td><td><var>pred</var> <var>obj</var>*</td></tr>
+                <tr style="height: 0.5em"><td colspan="3"></td></tr>
+                <tr><td><var>pred</var></td><td>::=</td><td><var>uri_pred</var> | <var>def_ns_pred</var> | <var>ns_pred</var></td></tr>
+                <tr><td><var>uri_pred</var></td><td>::=</td><td>'<b>&amp;pu=</b>' <var>uri</var></td></tr>
+                <tr><td><var>def_ns_pred</var></td><td>::=</td><td>'<b>&amp;pv=</b>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>ns_pred</var></td><td>::=</td><td>'<b>&amp;pn=</b>' <var>name</var> '<b>&amp;pv=</b>' <var>uri_suffix</var></td></tr>
+                <tr style="height: 0.5em"><td colspan="3"></td></tr>
+                <tr><td><var>obj</var></td><td>::=</td><td><var>blank_obj</var> | <var>uri_obj</var> | <var>def_ns_obj</var> | <var>ns_obj</var> | <var>literal_obj</var></td></tr>
+                <tr><td><var>blank_obj</var></td><td>::=</td><td>'<b>&amp;ob=</b>' <var>name</var></td></tr>
+                <tr><td><var>uri_obj</var></td><td>::=</td><td>'<b>&amp;ou=</b>' <var>uri</var></td></tr>
+                <tr><td><var>def_ns_obj</var></td><td>::=</td><td>'<b>&amp;ov=</b>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>ns_obj</var></td><td>::=</td><td>'<b>&amp;on=</b>' <var>name</var> '<b>&amp;ov=</b>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>literal_obj</var></td><td>::=</td><td>'<b>&amp;ol=</b>' <var>string</var> <var>type_or_lang</var>? | <var>type_or_lang</var> '<b>&amp;ol=</b>' <var>string</var></td></tr>
+                <tr><td><var>type_or_lang</var></td><td>::=</td><td><var>type</var> | <var>lang</var></td></tr>
+                <tr><td><var>type</var></td><td>::=</td><td>'<b>&amp;lt=</b>' <var>uri</var></td></tr>
+                <tr><td><var>lang</var></td><td>::=</td><td>'<b>&amp;ll=</b>' <var>lang_id</var></td></tr>
+                <tr style="height: 0.5em"><td colspan="3"></td></tr>
+                <tr><td><var>uri</var></td><td>::=</td><td><var>string</var>&nbsp;&nbsp;&nbsp;&nbsp;<em>/* URI as defined in RFC3986 */</em></td></tr>
+                <tr><td><var>uri_prefix</var></td><td>::=</td><td><var>uri</var>&nbsp;&nbsp;&nbsp;&nbsp;<em>/* any valid URI prefix */</em></td></tr>
+                <tr><td><var>uri_suffix</var></td><td>::=</td><td><var>uri</var>&nbsp;&nbsp;&nbsp;&nbsp;<em>/* any valid URI suffix */</em></td></tr>
+                <tr><td><var>lang_id</var></td><td>::=</td><td><var>string</var>&nbsp;&nbsp;&nbsp;&nbsp;<em>/* see xml:lang */</em></td></tr>
+                <tr><td><var>name</var></td><td>::=</td><td>[<b>A</b>-<b>Za</b>-<b>z</b>][<b>A</b>-<b>Za</b>-<b>z0</b>-<b>9</b>]* &nbsp;&nbsp;&nbsp;&nbsp;<em>/* same as in N-Triples */</em></td></tr>
+                <tr><td><var>string</var></td><td>::=</td><td>(<var>schar</var> | <var>plus</var> | <var>echar</var>)* &nbsp;&nbsp;&nbsp;&nbsp;<em>/* unreserved or urlencoded */</em></td></tr> 
+                <tr><td><var>schar</var></td><td>::=</td><td>[<b>A</b>-<b>Za</b>-<b>z0</b>-<b>9.,;:'/?!$@()*~_-</b>] &nbsp;&nbsp;&nbsp;&nbsp;<em>/* safe as per RFC3986 */</em></td></tr> 
+                <tr><td><var>plus</var></td><td>::=</td><td>'<b>+</b>' &nbsp;&nbsp;&nbsp;&nbsp;<em>/* encodes single space (#x20) */</em></td></tr> 
+                <tr><td><var>echar</var></td><td>::=</td><td>'<b>%</b>'[<b>0</b>-<b>9A</b>-<b>Fa</b>-<b>f</b>][<b>0</b>-<b>9A</b>-<b>Fa</b>-<b>f</b>] &nbsp;&nbsp;<em>/* encodes one octet */</em></td></tr> 
+            </table>
+            <p>The use of this format in HTML pages relies on the <q>fields are listed in the order they appear</q> requirement of the HTML Forms specification. Since HTML user agents are not required to send fields with null values (browsers are free to ignore them), such fields should not be used to send pairs which are important for correct decoding of the format (e.g. a pair defining the subject of a triple). Remember that hidden fields are always sent if they have <code>value</code> attributes present.</p>
+            <p>To handle data submitted from HTML forms, the decoder should allow for some missing pairs, skipping to the next sync point (if any) and silently ignoring the affected triples:</p>
+            <ul>
+                <li><var class="bnf">pred</var> is expected, but there is no &amp;pv=, &amp;pn=, or &amp;pu= ahead: skip to the
+                next <var class="bnf">subj</var> (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=).</li>
+                <li>&amp;pn= <var class="bnf">name</var> is seen, but there's no &amp;pv= ahead: skip to the next <var class="bnf">subj</var>
+                (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=).</li>
+                <li><var class="bnf">obj</var> is expected, but there is no &amp;ob=, &amp;ov=, &amp;on=, &amp;ou=, or &amp;ol= ahead:
+                skip to the next <var class="bnf">pred</var> (&amp;pu=, &amp;pv=, or &amp;pn=) or  <var class="bnf">subj</var> 
+                (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=),
+                whichever comes first.</li>
+                <li>&amp;on= <var class="bnf">name</var> is seen, but there's no &amp;ov= ahead: skip to the next <var class="bnf">pred</var> 
+                (&amp;pu=, &amp;pv=, or &amp;pn=) or  <var class="bnf">subj</var> (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=),
+                whichever comes first.</li>
+                <li>&amp;lt= or &amp;ll= is seen, but there is no &amp;ol= ahead: skip to the next 
+                non-literal <var class="bnf">obj</var> (&amp;ob=, &amp;ou=, &amp;ov=, or &amp;on=),
+                <var class="bnf">pred</var> (&amp;pu=, &amp;pv=, or &amp;pn=) 
+                or  <var class="bnf">subj</var> (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=),
+                whichever comes first.</li>
+            </ul>
+            <p>Strings can contain any Unicode character encoded in UTF-8 and, if the resulting octets fall outside of US_ASCII, urlencoded as described in <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">
+            Form content types - application/x-www-form-urlencoded</a> [[HTML401]]. The simplest way to ensure that browsers send form data in UTF-8 is to encode form pages in UTF-8.</p>
+        </section>
+        <section>
+            <h2 id="sec-examples">Examples</h2>
+            <p>Here is a simple RDF/POST document encoded in a simple HTML form:</p>
+            <div>
+                <form>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="vertical-align: middle">
+                                    <input type="hidden" name="rdf" value=""/>
+                                    <!-- namespace decls -->
+                                    <input type="hidden" name="v" value="http://xmlns.com/foaf/0.1/"/>
+                                    <input type="hidden" name="n" value="rdf"/>
+                                    <input type="hidden" name="v" value="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+                                    <input type="hidden" name="n" value="dc"/>
+                                    <input type="hidden" name="v" value="http://purl.org/dc/elements/1.1/"/>
+                                    <!-- triples -->
+                                    Someone called
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <input type="hidden" name="sb" value="o"/>
+                                    <input type="hidden" name="pv" value="givenname"/>
+                                    <input type="text" name="ol" value="Ora" size="10"/>
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <input type="hidden" name="pv" value="surname"/>
+                                    <input type="text" name="ol" value="Lasilla" size="10"/>
+                                    <input type="hidden" name="pn" value="dc"/><input type="hidden" name="pv" value="creator"/>
+                                    <input type="hidden" name="ob" value="b"/>
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <input type="hidden" name="sb" value="b"/>
+                                    <input type="hidden" name="pn" value="rdf"/><input type="hidden" name="pv" value="type"/>
+                                    <select name="ov">
+                                        <option selected="selected" value="Document">wrote a book</option>
+                                        <option value="Image">painted a picture</option>
+                                    </select>
+                                </td>
+                                <td style="vertical-align: middle">
+                                  titled 
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <input type="hidden" name="pn" value="dc"/><input type="hidden" name="pv" value="title"/>
+                                    <input type="text" name="ol" value="Moby Dick" size="20"/>
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <input type="submit" value="Post"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div> 
+            <p>In both examples the query part is constructed as follows (spaces and indentation are added for presentation purposes):</p>
+            <pre class="example"><code>rdf=
+&amp;v=http://xmlns.com/foaf/0.1/
+&amp;n=rdf &amp;v=http://www.w3.org/1999/02/22-rdf-syntax-ns%23
+&amp;n=dc &amp;v=http://purl.org/dc/elements/1.1/
+&amp;sb=o
+ &amp;pv=givenname
+  &amp;ol=Ora
+ &amp;pv=surname
+  &amp;ol=Lasilla
+ &amp;pn=dc &amp;pv=creator
+  &amp;ob=b
+&amp;sb=b
+ &amp;pn=rdf &amp;pv=type
+  &amp;ov=Document
+ &amp;pn=dc &amp;pv=title
+  &amp;ol=Moby+Dick</code></pre>
+            <p>It can be compared line-by-line with the equivalent Turtle description:</p>
+            <pre><code>@prefix : &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns%23&gt; .
+@prefix dc: &lt;http://purl.org/dc/elements/1.1/&gt; .
+_:o
+ :givenname
+  "Ora" ;
+ :surname
+  "Lasilla" ;
+ dc:creator
+  _:b .
+_:b
+ rdf:type
+  :Document ;
+ dc:title
+  "Moby Dick" .</code></pre>
+            <p>If one wants to make sure that submitted data conforms to RDF datatype requirements, e.g. does not contain unexpected empty string values and incorrectly formatted dates, the forms can be validated with Javascript code.</p>
+        </section>
+        <section class='appendix'>
+            <h2>Internet Media Type, File Extension and Macintosh File Type</h2>
+            <p>As a rule, RDF/POST data is sent with application/x-www-form-urlencoded media type; if one needs to distinguish RDF/POSTs from regular posts, a more specific application/rdf+x-www-form-urlencoded media type can be used (not yet registered with IANA). Encoding considerations are the same in both cases; RDF/POSTs can be distinguished by the <code>rdf=</code> prefix.</p>
+            <p>Recommended file extension is .rpo</p>
+        </section>
+    </body>
+</html>
