@@ -53,10 +53,14 @@
               wgPublicList: "public-declarative-apps"
           };
         </script>
+        <style type="text/css">
+            .bnf { font-family: Menlo, Consolas, "DejaVu Sans Mono", Monaco, monospace; font-style: normal; }
+            var.bnf, .bnf var { color: rgb(198, 53, 1); font-style: normal; }
+        </style>
     </head>
     <body>
         <section id='abstract'>
-            <p>RDF/POST is a method for encoding an RDF graph using plain HTML forms.</p>
+            <p>RDF/POST is a syntax for encoding an RDF graph as HTTP GET URL query string or POST form-urlencoded request body. It can be used for building RDF editing interfaces with plain HTML forms (no JavaScript required).</p>
         </section>
         <section id='sotd'>
             <p>This document is based on the RDF/POST draft by Sergei Egorov.</p>
@@ -67,132 +71,158 @@
             <p>The W3C <a href="http://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4">HTML 4 Forms</a> recommendation specifies the behavior of HTTP user agents and includes a short description of the format used for submission of form data (MIME type application/x-www-form-urlencoded). The format is rather simple; its data model is an ordered list of key/value pairs, where keys and values are just strings. As implemented in modern browsers, the format has its limitations, but there is nothing preventing one from using (a profile of) it to serialize any RDF graph.</p>
             <p>The proposed serialization is straightforward and rather concise, which makes it suitable for use with HTTP GET (URLs over 2K in length run a risk of causing "414 Request URL Too Long" reply from the server). It inherits the abbreviated tree form from [[Turtle]], using different keys for subject, predicate, and object to eliminate the need for punctuation.</p>
         </section>
-        <section>
-            <h2 id="sec-grammar">RDF/POST Grammar</h2>
+        <section id="grammar">
+            <h2>RDF/POST Grammar</h2>
             <p>This EBNF is defined in XML 1.0 second edition [[XML]].</p>
-            <table class="grammar">
-                <tr><td><var>rdf</var></td><td>::=</td><td>'<b>rdf=</b>' <var>def_ns_decl</var>? <var>ns_decl</var>* <var>triples</var>*</td></tr>
-                <tr><td><var>def_ns_decl</var></td><td>::=</td><td>'<b>&amp;v=</b>' <var>uri_prefix</var></td></tr>
-                <tr><td><var>ns_decl</var></td><td>::=</td><td>'<b>&amp;n=</b>' <var>name</var> '<b>&amp;v=</b>' <var>uri_prefix</var></td></tr>
+            <table class="bnf">
+                <tr><td><var>rdf</var></td><td>::=</td><td>'<code>rdf=</code>' <var>def_ns_decl</var>? <var>ns_decl</var>* <var>triples</var>*</td></tr>
+                <tr><td><var>def_ns_decl</var></td><td>::=</td><td>'<code>&amp;v=</code>' <var>uri_prefix</var></td></tr>
+                <tr><td><var>ns_decl</var></td><td>::=</td><td>'<code>&amp;n=</code>' <var>name</var> '<code>&amp;v=</code>' <var>uri_prefix</var></td></tr>
                 <tr><td><var>triples</var></td><td>::=</td><td><var>subj</var> <var>property</var>*</td></tr>
                 <tr style="height: 0.5em"><td colspan="3"></td></tr>
                 <tr><td><var>subj</var></td><td>::=</td><td><var>blank_subj</var> | <var>uri_subj</var> | <var>def_ns_subj</var> | <var>ns_subj</var></td></tr>
-                <tr><td><var>blank_subj</var></td><td>::=</td><td>'<b>&amp;sb=</b>' <var>name</var></td></tr>
-                <tr><td><var>uri_subj</var></td><td>::=</td><td>'<b>&amp;su=</b>' <var>uri</var></td></tr>
-                <tr><td><var>def_ns_subj</var></td><td>::=</td><td>'<b>&amp;sv=</b>' <var>uri_suffix</var></td></tr>
-                <tr><td><var>ns_subj</var></td><td>::=</td><td>'<b>&amp;sn=</b>' <var>name</var> '<b>&amp;sv=</b>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>blank_subj</var></td><td>::=</td><td>'<code>&amp;sb=</code>' <var>name</var></td></tr>
+                <tr><td><var>uri_subj</var></td><td>::=</td><td>'<code>&amp;su=</code>' <var>uri</var></td></tr>
+                <tr><td><var>def_ns_subj</var></td><td>::=</td><td>'<code>&amp;sv=</code>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>ns_subj</var></td><td>::=</td><td>'<code>&amp;sn=</code>' <var>name</var> '<code>&amp;sv=</code>' <var>uri_suffix</var></td></tr>
                 <tr><td><var>property</var></td><td>::=</td><td><var>pred</var> <var>obj</var>*</td></tr>
                 <tr style="height: 0.5em"><td colspan="3"></td></tr>
                 <tr><td><var>pred</var></td><td>::=</td><td><var>uri_pred</var> | <var>def_ns_pred</var> | <var>ns_pred</var></td></tr>
-                <tr><td><var>uri_pred</var></td><td>::=</td><td>'<b>&amp;pu=</b>' <var>uri</var></td></tr>
-                <tr><td><var>def_ns_pred</var></td><td>::=</td><td>'<b>&amp;pv=</b>' <var>uri_suffix</var></td></tr>
-                <tr><td><var>ns_pred</var></td><td>::=</td><td>'<b>&amp;pn=</b>' <var>name</var> '<b>&amp;pv=</b>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>uri_pred</var></td><td>::=</td><td>'<code>&amp;pu=</code>' <var>uri</var></td></tr>
+                <tr><td><var>def_ns_pred</var></td><td>::=</td><td>'<code>&amp;pv=</code>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>ns_pred</var></td><td>::=</td><td>'<code>&amp;pn=</code>' <var>name</var> '<code>&amp;pv=</code>' <var>uri_suffix</var></td></tr>
                 <tr style="height: 0.5em"><td colspan="3"></td></tr>
                 <tr><td><var>obj</var></td><td>::=</td><td><var>blank_obj</var> | <var>uri_obj</var> | <var>def_ns_obj</var> | <var>ns_obj</var> | <var>literal_obj</var></td></tr>
-                <tr><td><var>blank_obj</var></td><td>::=</td><td>'<b>&amp;ob=</b>' <var>name</var></td></tr>
-                <tr><td><var>uri_obj</var></td><td>::=</td><td>'<b>&amp;ou=</b>' <var>uri</var></td></tr>
-                <tr><td><var>def_ns_obj</var></td><td>::=</td><td>'<b>&amp;ov=</b>' <var>uri_suffix</var></td></tr>
-                <tr><td><var>ns_obj</var></td><td>::=</td><td>'<b>&amp;on=</b>' <var>name</var> '<b>&amp;ov=</b>' <var>uri_suffix</var></td></tr>
-                <tr><td><var>literal_obj</var></td><td>::=</td><td>'<b>&amp;ol=</b>' <var>string</var> <var>type_or_lang</var>? | <var>type_or_lang</var> '<b>&amp;ol=</b>' <var>string</var></td></tr>
+                <tr><td><var>blank_obj</var></td><td>::=</td><td>'<code>&amp;ob=</code>' <var>name</var></td></tr>
+                <tr><td><var>uri_obj</var></td><td>::=</td><td>'<code>&amp;ou=</code>' <var>uri</var></td></tr>
+                <tr><td><var>def_ns_obj</var></td><td>::=</td><td>'<code>&amp;ov=</code>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>ns_obj</var></td><td>::=</td><td>'<code>&amp;on=</code>' <var>name</var> '<code>&amp;ov=</code>' <var>uri_suffix</var></td></tr>
+                <tr><td><var>literal_obj</var></td><td>::=</td><td>'<code>&amp;ol=</code>' <var>string</var> <var>type_or_lang</var>? | <var>type_or_lang</var> '<code>&amp;ol=</code>' <var>string</var></td></tr>
                 <tr><td><var>type_or_lang</var></td><td>::=</td><td><var>type</var> | <var>lang</var></td></tr>
-                <tr><td><var>type</var></td><td>::=</td><td>'<b>&amp;lt=</b>' <var>uri</var></td></tr>
-                <tr><td><var>lang</var></td><td>::=</td><td>'<b>&amp;ll=</b>' <var>lang_id</var></td></tr>
+                <tr><td><var>type</var></td><td>::=</td><td>'<code>&amp;lt=</code>' <var>uri</var></td></tr>
+                <tr><td><var>lang</var></td><td>::=</td><td>'<code>&amp;ll=</code>' <var>lang_id</var></td></tr>
                 <tr style="height: 0.5em"><td colspan="3"></td></tr>
                 <tr><td><var>uri</var></td><td>::=</td><td><var>string</var>&nbsp;&nbsp;&nbsp;&nbsp;<em>/* URI as defined in RFC3986 */</em></td></tr>
                 <tr><td><var>uri_prefix</var></td><td>::=</td><td><var>uri</var>&nbsp;&nbsp;&nbsp;&nbsp;<em>/* any valid URI prefix */</em></td></tr>
                 <tr><td><var>uri_suffix</var></td><td>::=</td><td><var>uri</var>&nbsp;&nbsp;&nbsp;&nbsp;<em>/* any valid URI suffix */</em></td></tr>
                 <tr><td><var>lang_id</var></td><td>::=</td><td><var>string</var>&nbsp;&nbsp;&nbsp;&nbsp;<em>/* see xml:lang */</em></td></tr>
-                <tr><td><var>name</var></td><td>::=</td><td>[<b>A</b>-<b>Za</b>-<b>z</b>][<b>A</b>-<b>Za</b>-<b>z0</b>-<b>9</b>]* &nbsp;&nbsp;&nbsp;&nbsp;<em>/* same as in N-Triples */</em></td></tr>
+                <tr><td><var>name</var></td><td>::=</td><td>[<code>A</code>-<code>Za</code>-<code>z</code>][<code>A</code>-<code>Za</code>-<code>z0</code>-<code>9</code>]* &nbsp;&nbsp;&nbsp;&nbsp;<em>/* same as in N-Triples */</em></td></tr>
                 <tr><td><var>string</var></td><td>::=</td><td>(<var>schar</var> | <var>plus</var> | <var>echar</var>)* &nbsp;&nbsp;&nbsp;&nbsp;<em>/* unreserved or urlencoded */</em></td></tr> 
-                <tr><td><var>schar</var></td><td>::=</td><td>[<b>A</b>-<b>Za</b>-<b>z0</b>-<b>9.,;:'/?!$@()*~_-</b>] &nbsp;&nbsp;&nbsp;&nbsp;<em>/* safe as per RFC3986 */</em></td></tr> 
-                <tr><td><var>plus</var></td><td>::=</td><td>'<b>+</b>' &nbsp;&nbsp;&nbsp;&nbsp;<em>/* encodes single space (#x20) */</em></td></tr> 
-                <tr><td><var>echar</var></td><td>::=</td><td>'<b>%</b>'[<b>0</b>-<b>9A</b>-<b>Fa</b>-<b>f</b>][<b>0</b>-<b>9A</b>-<b>Fa</b>-<b>f</b>] &nbsp;&nbsp;<em>/* encodes one octet */</em></td></tr> 
+                <tr><td><var>schar</var></td><td>::=</td><td>[<code>A</code>-<code>Za</code>-<code>z0</code>-<code>9.,;:'/?!$@()*~_-</code>] &nbsp;&nbsp;&nbsp;&nbsp;<em>/* safe as per RFC3986 */</em></td></tr> 
+                <tr><td><var>plus</var></td><td>::=</td><td>'<code>+</code>' &nbsp;&nbsp;&nbsp;&nbsp;<em>/* encodes single space (#x20) */</em></td></tr> 
+                <tr><td><var>echar</var></td><td>::=</td><td>'<code>%</code>'[<code>0</code>-<code>9A</code>-<code>Fa</code>-<code>f</code>][<code>0</code>-<code>9A</code>-<code>Fa</code>-<code>f</code>] &nbsp;&nbsp;<em>/* encodes one octet */</em></td></tr> 
             </table>
+        </section>
+        <section id="parsing">
+            <h2>Parsing</h2>
             <p>The use of this format in HTML pages relies on the <q>fields are listed in the order they appear</q> requirement of the HTML Forms specification. Since HTML user agents are not required to send fields with null values (browsers are free to ignore them), such fields should not be used to send pairs which are important for correct decoding of the format (e.g. a pair defining the subject of a triple). Remember that hidden fields are always sent if they have <code>value</code> attributes present.</p>
             <p>To handle data submitted from HTML forms, the decoder should allow for some missing pairs, skipping to the next sync point (if any) and silently ignoring the affected triples:</p>
             <ul>
-                <li><var class="bnf">pred</var> is expected, but there is no &amp;pv=, &amp;pn=, or &amp;pu= ahead: skip to the
-                next <var class="bnf">subj</var> (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=).</li>
-                <li>&amp;pn= <var class="bnf">name</var> is seen, but there's no &amp;pv= ahead: skip to the next <var class="bnf">subj</var>
-                (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=).</li>
-                <li><var class="bnf">obj</var> is expected, but there is no &amp;ob=, &amp;ov=, &amp;on=, &amp;ou=, or &amp;ol= ahead:
-                skip to the next <var class="bnf">pred</var> (&amp;pu=, &amp;pv=, or &amp;pn=) or  <var class="bnf">subj</var> 
-                (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=),
+                <li><var class="bnf">pred</var> is expected, but there is no <code>&amp;pv=</code>, <code>&amp;pn=</code>, or <code>&amp;pu=</code> ahead: skip to the
+                next <var class="bnf">subj</var> (<code>&amp;sb=</code>, <code>&amp;su=</code>, <code>&amp;sv=</code>, <code>&amp;sn=</code>).</li>
+                <li><code>&amp;pn=</code> <var class="bnf">name</var> is seen, but there's no <code>&amp;pv=</code> ahead: skip to the next <var class="bnf">subj</var>
+                (<code>&amp;sb=</code>, <code>&amp;su=</code>, <code>&amp;sv=</code>, <code>&amp;sn=</code>).</li>
+                <li><var class="bnf">obj</var> is expected, but there is no <code>&amp;ob=</code>, <code>&amp;ov=</code>, <code>&amp;on=</code>, <code>&amp;ou=</code>, or <code>&amp;ol=</code> ahead:
+                skip to the next <var class="bnf">pred</var> (<code>&amp;pu=</code>, <code>&amp;pv=</code>, or <code>&amp;pn=</code>) or  <var class="bnf">subj</var> 
+                (<code>&amp;sb=</code>, <code>&amp;su=</code>, <code>&amp;sv=</code>, <code>&amp;sn=</code>),
                 whichever comes first.</li>
-                <li>&amp;on= <var class="bnf">name</var> is seen, but there's no &amp;ov= ahead: skip to the next <var class="bnf">pred</var> 
-                (&amp;pu=, &amp;pv=, or &amp;pn=) or  <var class="bnf">subj</var> (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=),
+                <li><code>&amp;on=</code> <var class="bnf">name</var> is seen, but there's no <code>&amp;ov=</code> ahead: skip to the next <var class="bnf">pred</var> 
+                (<code>&amp;pu=</code>, <code>&amp;pv=</code>, or <code>&amp;pn=</code>) or <var class="bnf">subj</var> (<code>&amp;sb=</code>, <code>&amp;su=</code>, <code>&amp;sv=</code>, <code>&amp;sn=</code>),
                 whichever comes first.</li>
-                <li>&amp;lt= or &amp;ll= is seen, but there is no &amp;ol= ahead: skip to the next 
-                non-literal <var class="bnf">obj</var> (&amp;ob=, &amp;ou=, &amp;ov=, or &amp;on=),
-                <var class="bnf">pred</var> (&amp;pu=, &amp;pv=, or &amp;pn=) 
-                or  <var class="bnf">subj</var> (&amp;sb=, &amp;su=, &amp;sv=, &amp;sn=),
-                whichever comes first.</li>
+                <li><code>&amp;lt=</code> or <code>&amp;ll=</code> is seen, but there is no <code>&amp;ol=</code> ahead: skip to the next non-literal <var class="bnf">obj</var> (<code>&amp;ob=</code>, <code>&amp;ou=</code>, <code>&amp;ov=</code>, or <code>&amp;on=</code>), <var class="bnf">pred</var> (<code>&amp;pu=</code>, <code>&amp;pv=</code>, or <code>&amp;pn=</code>) or <var class="bnf">subj</var> (<code>&amp;sb=</code>, <code>&amp;su=</code>, <code>&amp;sv=</code>, <code>&amp;sn=</code>), whichever comes first.</li>
             </ul>
             <p>Strings can contain any Unicode character encoded in UTF-8 and, if the resulting octets fall outside of US_ASCII, urlencoded as described in <a href="https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">
             Form content types - application/x-www-form-urlencoded</a> [[HTML401]]. The simplest way to ensure that browsers send form data in UTF-8 is to encode form pages in UTF-8.</p>
         </section>
         <section>
-            <h2 id="sec-examples">Examples</h2>
+            <h2 id="examples">Examples</h2>
             <p>Here is a simple RDF/POST document encoded in a simple HTML form:</p>
-            <div>
-                <form>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td style="vertical-align: middle">
-                                    <input type="hidden" name="rdf" value=""/>
-                                    <!-- namespace decls -->
-                                    <input type="hidden" name="v" value="http://xmlns.com/foaf/0.1/"/>
-                                    <input type="hidden" name="n" value="rdf"/>
-                                    <input type="hidden" name="v" value="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
-                                    <input type="hidden" name="n" value="dc"/>
-                                    <input type="hidden" name="v" value="http://purl.org/dc/elements/1.1/"/>
-                                    <!-- triples -->
-                                    Someone called
-                                </td>
-                                <td style="vertical-align: middle">
-                                    <input type="hidden" name="sb" value="o"/>
-                                    <input type="hidden" name="pv" value="givenname"/>
-                                    <input type="text" name="ol" value="Ora" size="10"/>
-                                </td>
-                                <td style="vertical-align: middle">
-                                    <input type="hidden" name="pv" value="surname"/>
-                                    <input type="text" name="ol" value="Lasilla" size="10"/>
-                                    <input type="hidden" name="pn" value="dc"/><input type="hidden" name="pv" value="creator"/>
-                                    <input type="hidden" name="ob" value="b"/>
-                                </td>
-                                <td style="vertical-align: middle">
-                                    <input type="hidden" name="sb" value="b"/>
-                                    <input type="hidden" name="pn" value="rdf"/><input type="hidden" name="pv" value="type"/>
-                                    <select name="ov">
-                                        <option selected="selected" value="Document">wrote a book</option>
-                                        <option value="Image">painted a picture</option>
-                                    </select>
-                                </td>
-                                <td style="vertical-align: middle">
-                                  titled 
-                                </td>
-                                <td style="vertical-align: middle">
-                                    <input type="hidden" name="pn" value="dc"/><input type="hidden" name="pv" value="title"/>
-                                    <input type="text" name="ol" value="Moby Dick" size="20"/>
-                                </td>
-                                <td style="vertical-align: middle">
-                                    <input type="submit" value="Post"/>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </form>
-            </div> 
-            <p>During form submission, the query part is constructed as follows (spaces and indentation are added for presentation purposes):</p>
+            <form>
+                <p>
+                    <input type="hidden" name="rdf" value=""/>
+
+                    <!-- namespace declarations -->
+                    <input type="hidden" name="v" value="http://xmlns.com/foaf/0.1/"/>
+                    <input type="hidden" name="n" value="rdf"/>
+                    <input type="hidden" name="v" value="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+                    <input type="hidden" name="n" value="dc"/>
+                    <input type="hidden" name="v" value="http://purl.org/dc/elements/1.1/"/>
+
+                    <!-- triples -->
+                    <span>Someone called</span>
+                    <input type="hidden" name="sb" value="o"/>
+                    <input type="hidden" name="pv" value="givenName"/>
+                    <input type="text" name="ol" value="Ora" size="10"/>
+
+                    <input type="hidden" name="pv" value="familyName"/>
+                    <input type="text" name="ol" value="Lasilla" size="10"/>
+
+                    <input type="hidden" name="pn" value="dc"/><input type="hidden" name="pv" value="creator"/>
+                    <input type="hidden" name="ob" value="b"/>
+
+                    <input type="hidden" name="sb" value="b"/>
+                    <input type="hidden" name="pn" value="rdf"/><input type="hidden" name="pv" value="type"/>
+                    <select name="ov">
+                        <option selected="selected" value="Document">wrote a book</option>
+                        <option value="Image">painted a picture</option>
+                    </select>
+
+                    <span>titled</span>
+                    <input type="hidden" name="pn" value="dc"/>
+                    <input type="hidden" name="pv" value="title"/>
+                    <input type="text" name="ol" value="Moby Dick" size="20"/>
+
+                    <button type="submit">Post</button>
+                </p>
+            </form>
+            <p>The HTML code of this form looks like this:</p>
+            <pre><code>&lt;form&gt;
+    &lt;p&gt;
+        &lt;input type="hidden" name="rdf" value=""/&gt;
+
+        &lt;!-- namespace declarations --&gt;
+        &lt;input type="hidden" name="v" value="http://xmlns.com/foaf/0.1/"/&gt;
+        &lt;input type="hidden" name="n" value="rdf"/&gt;
+        &lt;input type="hidden" name="v" value="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/&gt;
+        &lt;input type="hidden" name="n" value="dc"/&gt;
+        &lt;input type="hidden" name="v" value="http://purl.org/dc/elements/1.1/"/&gt;
+
+        &lt;!-- triples --&gt;
+        &lt;span&gt;Someone called&lt;/span&gt;
+        &lt;input type="hidden" name="sb" value="o"/&gt;
+        &lt;input type="hidden" name="pv" value="givenName"/&gt;
+        &lt;input type="text" name="ol" value="Ora" size="10"/&gt;
+
+        &lt;input type="hidden" name="pv" value="familyName"/&gt;
+        &lt;input type="text" name="ol" value="Lasilla" size="10"/&gt;
+
+        &lt;input type="hidden" name="pn" value="dc"/&gt;&lt;input type="hidden" name="pv" value="creator"/&gt;
+        &lt;input type="hidden" name="ob" value="b"/&gt;
+
+        &lt;input type="hidden" name="sb" value="b"/&gt;
+        &lt;input type="hidden" name="pn" value="rdf"/&gt;&lt;input type="hidden" name="pv" value="type"/&gt;
+        &lt;select name="ov"&gt;
+            &lt;option selected="selected" value="Document"&gt;wrote a book&lt;/option&gt;
+            &lt;option value="Image"&gt;painted a picture&lt;/option&gt;
+        &lt;/select&gt;
+
+        &lt;span&gt;titled&lt;/span&gt;
+        &lt;input type="hidden" name="pn" value="dc"/&gt;
+        &lt;input type="hidden" name="pv" value="title"/&gt;
+        &lt;input type="text" name="ol" value="Moby Dick" size="20"/&gt;
+
+        &lt;button type="submit"&gt;Post&lt;/button&gt;
+    &lt;/p&gt;
+&lt;/form&gt;</code></pre>
+            <p>During form submission, the browser constructs the following query string (spaces and indentation are added for presentation purposes):</p>
             <pre class="example"><code>rdf=
 &amp;v=http://xmlns.com/foaf/0.1/
 &amp;n=rdf &amp;v=http://www.w3.org/1999/02/22-rdf-syntax-ns%23
 &amp;n=dc &amp;v=http://purl.org/dc/elements/1.1/
 &amp;sb=o
- &amp;pv=givenname
+ &amp;pv=givenName
   &amp;ol=Ora
- &amp;pv=surname
+ &amp;pv=familyName
   &amp;ol=Lasilla
  &amp;pn=dc &amp;pv=creator
   &amp;ob=b
@@ -206,9 +236,9 @@
 @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns%23&gt; .
 @prefix dc: &lt;http://purl.org/dc/elements/1.1/&gt; .
 _:o
- :givenname
+ :givenName
   "Ora" ;
- :surname
+ :familyName
   "Lasilla" ;
  dc:creator
   _:b .
