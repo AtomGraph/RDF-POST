@@ -68,8 +68,8 @@
         <section class="informative">
             <h2>Introduction</h2>
             <p>The Resource Description Framework (<abbr title="Resource Description Framework">RDF</abbr>) is the basic knowledge representation model for the W3C Semantic Web initiative. RDF/POST is an encoding method allowing the transfer of RDF data via the traditional HTTP GET and HTTP POST mechanism, facilitating the creation of RDF-in/RDF-out web services with dual interfaces (direct programmatic access and human-friendly entry and result pages).</p>
-            <p>The W3C <a href="http://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4">HTML 4 Forms</a> recommendation specifies the behavior of HTTP user agents and includes a short description of the format used for submission of form data (MIME type application/x-www-form-urlencoded). The format is rather simple; its data model is an ordered list of key/value pairs, where keys and values are just strings. As implemented in modern browsers, the format has its limitations, but there is nothing preventing one from using (a profile of) it to serialize any RDF graph.</p>
-            <p>The proposed serialization is straightforward and rather concise, which makes it suitable for use with HTTP GET (URLs over 2K in length run a risk of causing "414 Request URL Too Long" reply from the server). It inherits the abbreviated tree form from [[Turtle]], using different keys for subject, predicate, and object to eliminate the need for punctuation.</p>
+            <p>The W3C <a href="http://www.w3.org/TR/REC-html40/interact/forms.html#h-17.13.4">HTML 4 Forms</a> recommendation specifies the behavior of HTTP user agents and includes a short description of the format used for submission of form data (MIME type "application/x-www-form-urlencoded"). The format is rather simple; its data model is an ordered list of key/value pairs, where keys and values are just strings. As implemented in modern browsers, the format has its limitations, but there is nothing preventing one from using (a profile of) it to serialize any RDF graph.</p>
+            <p>The proposed serialization is straightforward and rather concise, which makes it suitable for use with HTTP GET (URLs over 2K in length run a risk of causing <samp>414 Request URL Too Long</samp> reply from the server). It inherits the abbreviated tree form from [[Turtle]], using different keys for subject, predicate, and object to eliminate the need for punctuation.</p>
         </section>
         <section id="grammar">
             <h2>RDF/POST Grammar</h2>
@@ -255,8 +255,8 @@ _:b
         </section>
         <section class='appendix'>
             <h2>Internet Media Type, File Extension and Macintosh File Type</h2>
-            <p>As a rule, RDF/POST data is sent with application/x-www-form-urlencoded media type; if one needs to distinguish RDF/POSTs from regular posts, a more specific application/rdf+x-www-form-urlencoded media type can be used (not yet registered with IANA). Encoding considerations are the same in both cases; RDF/POSTs can be distinguished by the <code>rdf=</code> prefix.</p>
-            <p>Recommended file extension is .rpo</p>
+            <p>As a rule, RDF/POST data is sent with "application/x-www-form-urlencoded" media type; if one needs to distinguish RDF/POSTs from regular posts, a more specific "application/rdf+x-www-form-urlencoded" media type can be used (not yet registered with IANA). Encoding considerations are the same in both cases; RDF/POSTs can be distinguished by the <code>rdf=</code> prefix.</p>
+            <p>Recommended file extension is ".rpo"</p>
         </section>
     </body>
 </html>
