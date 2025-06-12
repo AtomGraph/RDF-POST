@@ -4,9 +4,9 @@
 
 ## Why use it?
 
-* **Plain‑HTML forms** – build RDF edit or create interfaces with ordinary `<form>` elements.
-* **Human + machine friendly** – the same URL or form post doubles as both a web page and a programmatic API.
-* **Short & safe** – based on Turtle’s abbreviated tree form but avoids punctuation, keeping every component URL‑safe and well under typical 2 KB URL limits.
+* **Plain‑HTML forms** – build RDF edit and create interfaces with ordinary `<form>` elements—no JavaScript required.
+* **Language‑agnostic** – piggybacks on the ubiquitous `application/x-www-form-urlencoded` encoding that every web framework already understands.
+* **Streaming‑friendly** – triples arrive in a simple key/value stream, so parsers can handle very large graphs with constant memory.
 
 ## TL;DR syntax
 
